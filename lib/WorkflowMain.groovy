@@ -81,7 +81,7 @@ class WorkflowMain {
 
         // Check input has been provided
         if (!params.input) {
-            log.error "Please provide an input samplesheet to the pipeline e.g. '--input samplesheet.csv'"
+            log.error "Please provide path to the xenium bundle e.g. '--input /path/to/xenium_bundle'"
             System.exit(1)
         }
     }

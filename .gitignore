@@ -6,3 +6,5 @@ results/
 testing/
 testing*
 *.pyc
+.nextflow.log.*
+execution_trace_*
