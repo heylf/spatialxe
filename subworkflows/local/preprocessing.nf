@@ -6,10 +6,10 @@ include { PREPROCESSING } from '../../modules/local/preprocessing'
 
 workflow SEG_PREPROCESSING {
     take:
-    xenium_bundle // file: /path/to/xenium-bundle
+    path(transcripts_csv)
 
     main:
-    PREPROCESSING ( xenium_bundle )
+    PREPROCESSING ( "${input}/transcripts.csv.gz" )
 
     emit:
     filtered_transcripts

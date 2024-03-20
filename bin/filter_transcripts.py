@@ -4,12 +4,17 @@ import argparse
 import sys
 import pandas as pd
 
+__version__="1.0.0"
 
 def main():
     # Parse input arguments.
     args = parse_args()
 
-    data_frame = pd.read_csv(args.transcript, compression="gzip")
+    if args.version:
+        return __version__
+
+
+    data_frame = pd.read_csv(args.transcript)
 
     # Filter transcripts. Ignore negative controls
     filtered_frame = data_frame[(data_frame["qv"] >= args.min_qv) &
@@ -37,7 +42,7 @@ def main():
 
 def parse_args():
     """Parses command-line options for main()."""
-    summary = 'Filter transcripts from transcripts.csv based on Q-Score threshold \
+    summary = 'Filter transcripts from transcripts.csv.gz based on Q-Score threshold \
                and upper bounds on x and y coordinates. Remove negative controls.'
 
     parser = argparse.ArgumentParser(description=summary)
@@ -74,6 +79,7 @@ def parse_args():
                              "If no limit is specified, the default value will retain all " +
                              "transcripts since Xenium slide is <24000 microns in x and y. " +
                              "(default: 24000.0)")
+    parser.add_argument('-version', type=str, help="Show the version and exit")
 
     try:
         opts = parser.parse_args()

@@ -6,12 +6,12 @@ process BAYSOR {
         'vpetukhov/baysor:v0.5.0': '' }"
 
     input:
-    path("${meta.id}_filtered_transcript_csv"), 
+    path(filtered_transcript)
 
     output:
     path("baysor_segmentation.csv"), emit: baysor_segmentation
-    path("baysor_mtx"), emit: baysor_mtx
-    path("feature_matrix"), emit: feature_matrix
+    path("baysor_mtx")             , emit: baysor_mtx
+    path("feature_matrix")         , emit: feature_matrix
     path  "versions.yml"           , emit: versions
 
     when:
@@ -21,13 +21,13 @@ process BAYSOR {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     def PRIOR_CONF = PRIOR_CONF ? "--prior-segmentation-confidence ${PRIOR_CONF}" : ''
-    def MIN_TRANSCRIPT = MIN_TRANSCRIPT ? "${PRIOR_CONF}" : ''
+    def MIN_TRANSCRIPT = MIN_TRANSCRIPT ? "${MIN_TRANSCRIPT}" : ''
     """
     // perform segmentation
-    Baysor run -x ${x_location} \\
-               -y ${y_location} \\
-               -z ${z_location} \\
-               -g ${feature_name} \\
+    Baysor run -x x_location \\
+               -y y_location \\
+               -z z_location \\
+               -g feature_name \\
                -m ${MIN_TRANSCRIPT} \\
                -p \\
                ${PRIOR_CONF} \\
@@ -45,9 +45,9 @@ process BAYSOR {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch "${prefix}_baysor_segmentation.csv"
-    touch ${baysor_mtx}
-    touch ${feature_matrix}
+    touch "baysor_segmentation.csv"
+    touch "baysor_mtx"
+    touch "feature_matrix"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -6,11 +6,11 @@ process PREPROCESSING {
         'vpetukhov/baysor:v0.5.0': '' }"
 
     input:
-    path(xenium_bundle)
+    path(transcripts_csv)
 
     output:
-    path "${meta.id}_filtered_transcripts.csv"
-    path  "versions.yml"           , emit: versions
+    path (filtered_transcripts), emit: filtered_transcripts
+    path  "versions.yml"       , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -20,23 +20,22 @@ process PREPROCESSING {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    
-    filter_transcripts.py -transcript "${xenium_bundle}/transcripts.csv.gz"
+    filter_transcripts.py -transcript "${transcripts_csv}"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        baysor: \$( baysor --version | sed -e "s/baysor v//g" )
+        filter_transcripts.py: \$( filter_transcripts.py -version)
     END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch "${prefix}_filtered_transcripts.csv"
+    touch "${filtered_transcripts}"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        baysor: \$( baysor --version | sed -e "s/baysor v//g" )
+        filter_transcripts.py: \$( filter_transcripts.py -version)
     END_VERSIONS
     """
 }
