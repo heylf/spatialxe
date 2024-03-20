@@ -2,8 +2,8 @@ process PREPROCESSING {
     tag "$meta.id"
     label 'process_medium'
 
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'vpetukhov/baysor:v0.5.0': '' }"
+    container "docker.io/vpetukhov/baysor:v0.6.2
+"
 
     input:
     path(transcripts_csv)
@@ -16,6 +16,10 @@ process PREPROCESSING {
     task.ext.when == null || task.ext.when
 
     script:
+    // Exit if running this module with -profile conda / -profile mamba
+    if (workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1) {
+        error "Preprocessing module does not support Conda. Please use Docker / Singularity / Podman instead."
+    }
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
@@ -29,6 +33,10 @@ process PREPROCESSING {
     """
 
     stub:
+    // Exit if running this module with -profile conda / -profile mamba
+    if (workflow.profile.tokenize(',').intersect(['conda', 'mamba']).size() >= 1) {
+        error "Preprocessing module does not support Conda. Please use Docker / Singularity / Podman instead."
+    }
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch "${filtered_transcripts}"
