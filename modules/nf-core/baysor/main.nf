@@ -31,6 +31,7 @@ process BAYSOR {
                -m ${MIN_TRANSCRIPT} \\
                -p \\
                ${PRIOR_CONF} \\
+               --save-polygons=geojson \\
                ${TRANSCRIPT_CSV} :cell_id
 
     // run map transcripts
